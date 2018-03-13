@@ -1,10 +1,9 @@
 #!/bin/bash
 
 function createAmd64Mirrors() {
-  echo
   echo "- CREATING REPOSITORY MIRRORS"
 
-  echo  
+  echo
   echo "\t- Adding Key for Ubuntu Xenial"
   gpg --no-default-keyring --keyring trustedkeys.gpg --keyserver keys.gnupg.net --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32
   echo "\t- Creating AMD64 Mirror for Ubuntu Xenial : xenial"
@@ -33,14 +32,18 @@ USAGE :
   nxos-repository-util [OPTION]
 
 OPTIONS :
-  --create-amd64-mirrors
+  create-amd64-mirrors
 "
 
 case "$1" in
+  create-amd64-mirrors)
+    createAmd64Mirrors
+  ;;
+
   *)
     echo "$HELPTEXT"
     exit 1
-    ;;
+  ;;
 esac
 
 exit 0
