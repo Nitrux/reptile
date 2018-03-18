@@ -21,6 +21,8 @@ function createAmd64Mirrors() {
   aptly mirror create -architectures="amd64" kdeneon-xenial https://archive.neon.kde.org/user/ xenial main 2>&1 | sed -e 's/^/    * /'
 
   echo
+  echo "  - Adding Key for NXOS"
+  wget -O - http://repo.nxos.org/public.key | gpg --no-default-keyring --keyring trustedkeys.gpg --import 2>&1 | sed -e 's/^/    * /'
   echo "  - Creating AMD64 Mirror for NXOS : nxos"
   aptly mirror create -architectures="amd64" nxos http://repo.nxos.org/ nxos main 2>&1 | sed -e 's/^/    * /'
 }
@@ -63,7 +65,8 @@ case "$1" in
   ;;
 
   create-amd64-mirrors)
-    createAmd64Mirrors
+    shift
+    createAmd64Mirrors $@
   ;;
 
   update-mirrors)
