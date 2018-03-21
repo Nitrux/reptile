@@ -61,6 +61,12 @@ upload() {
         exit 1
       fi
 
+      if [ ! -e "$FILE" ]; then
+        echo "Invalid File"
+        exit 1
+      fi
+
+
       echo "DELETING Remote Upload Folder"
       curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X DELETE $NXOS_SERVER_URL/aptly-api/files/$REPO-$APTLY_USERNAME 2>&1 | sed -e 's/^/    - /'
 
