@@ -6,10 +6,10 @@ nxos-repository-util : A Simple Tool to manage NXOS repository with Aptly
 
 USAGE :
   nxos-repository-util [OPTION]
-  
+
 OPTIONS :
-  -h | --help
-  create-amd64-mirrors
-  update-mirrors [all | (list of space seperated mirrors)]
-  upload [development | testing] [file]
+  -h | --help                                                       Print this HELP TEXT
+  create-amd64-mirrors                                              Create the Repository Mirrors 
+  update-mirrors [all | (list of space seperated mirrors)]          Update the Created Mirrors
+  upload [development | testing] [list of space seperated files]    Upload Files to the repositories
 </pre>
