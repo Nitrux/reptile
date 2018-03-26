@@ -52,7 +52,23 @@ updateMirrors() {
 upload() {
   NXOS_SERVER_URL=http://88.198.66.58/
   REPO=$1
-  FILE=$(realpath $2)
+
+  shift
+
+  if [ -z $@ ]; then
+    echo "Invalid File List"
+    exit 1
+  else
+    for FILE in $@; do
+      if [ ! -e "$FILE" ]; then
+        echo "Invalid Files in File List"
+        exit 1
+      fi
+
+      FILE_PATH=$(realpath $FILE)
+      FILE_LIST="$FILE_LIST -F file=@$FILE_PATH "
+    done
+  fi
 
   case "$REPO" in
     development|testing)
@@ -61,19 +77,12 @@ upload() {
         exit 1
       fi
 
-      if [ ! -e "$FILE" ]; then
-        echo "Invalid File"
-        exit 1
-      fi
-
-
       echo "DELETING Remote Upload Folder"
       curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X DELETE $NXOS_SERVER_URL/aptly-api/files/$REPO-$APTLY_USERNAME 2>&1 | sed -e 's/^/    - /'
 
       echo
-      echo "UPLOADING $FILE"
-      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST -F file=@$FILE $NXOS_SERVER_URL/aptly-api/files/$REPO-$APTLY_USERNAME 2>&1 | sed -e 's/^/    - /'
-
+      echo "UPLOADING FILES"
+      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST $FILE_LIST $NXOS_SERVER_URL/aptly-api/files/$REPO-$APTLY_USERNAME 2>&1 | sed -e 's/^/    - /'
 
       echo
       echo "PUBLISHING to $REPO"
@@ -97,10 +106,10 @@ USAGE :
   nxos-repository-util [OPTION]
 
 OPTIONS :
-  -h | --help
-  create-amd64-mirrors
-  update-mirrors [all | (list of space seperated mirrors)]
-  upload [development | testing] [file]
+  -h | --help                                                       Print this HELP TEXT
+  create-amd64-mirrors                                              Create the Repository Mirrors 
+  update-mirrors [all | (list of space seperated mirrors)]          Update the Created Mirrors
+  upload [development | testing] [list of space seperated files]    Upload Files to the repositories
 "
 
 case "$1" in
@@ -129,7 +138,7 @@ case "$1" in
   upload)
     shift
 
-    if [ $# -ne 2 ]; then
+    if [ $# -lt 2 ]; then
       echo "Invalid Number of Arguments"
       echo "$HELPTEXT"
       exit 1
