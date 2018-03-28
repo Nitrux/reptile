@@ -112,8 +112,8 @@ OPTIONS :
   upload [development | testing] [list of space seperated files]    Upload Files to the repositories
 "
 if [ -z `which realpah` ]; then 
-  echo "realpath not fond";
-  exit 1;
+  echo "realpath not found";
+  exit -1;
 fi
 
 case "$1" in
