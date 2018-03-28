@@ -111,9 +111,10 @@ OPTIONS :
   update-mirrors [all | (list of space seperated mirrors)]          Update the Created Mirrors
   upload [development | testing] [list of space seperated files]    Upload Files to the repositories
 "
-if [ -z `which realpah` ]; then 
+
+if [ -z `which realpath` ]; then 
   echo "realpath not found";
-  exit -1;
+  exit 1;
 fi
 
 case "$1" in
