@@ -55,11 +55,11 @@ upload() {
 
   shift
 
-  if [ -z $@ ]; then
+  if [ -z "$@" ]; then
     echo "Invalid File List"
     exit 1
   else
-    for FILE in $@; do
+    for FILE in "$@"; do
       if [ ! -e "$FILE" ]; then
         echo "Invalid Files in File List"
         exit 1
@@ -111,6 +111,10 @@ OPTIONS :
   update-mirrors [all | (list of space seperated mirrors)]          Update the Created Mirrors
   upload [development | testing] [list of space seperated files]    Upload Files to the repositories
 "
+if [ -z `which realpah` ]; then 
+  echo "realpath not fond";
+  exit 1;
+fi
 
 case "$1" in
   --help|-h)
