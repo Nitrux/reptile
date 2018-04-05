@@ -12,4 +12,5 @@ OPTIONS :
   create-amd64-mirrors                                              Create the Repository Mirrors 
   update-mirrors [all | (list of space seperated mirrors)]          Update the Created Mirrors
   upload [development | testing] [list of space seperated files]    Upload Files to the repositories
+  push-to-stable                                                    Push Packages from testing to stable
 </pre>
