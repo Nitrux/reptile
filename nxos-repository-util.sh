@@ -100,6 +100,25 @@ upload() {
   esac
 }
 
+pushToStable() {
+  PACKAGES=$(find ~/.aptly/public/testing/pool/main/ -name *.deb)
+  TODAY=$(date +%s)
+  LIMIT_DAYS=15
+
+  echo "CHECKING FOR PACKAGES IN testing PUBLISHED >= $LIMIT_DAYS DAYS"
+
+  for PACKAGE in $PACKAGES; do
+    PACKAGE_NAME=$(echo $PACKAGE | awk -F/ '{print $NF}' | awk '{print substr($0, 1, length($1)-4)}')
+    PACKAGE_DATE=$(date -r $PACKAGE +%s)
+    DATE_DIFF=$(($TODAY - $PACKAGE_DATE))
+
+    if [ $DATE_DIFF -ge $(($LIMIT_DAYS * 86400)) ]; then
+      echo "    - Moving Package $PACKAGE_NAME to stable"
+      aptly repo move -dry-run testing stable $PACKAGE_NAME 2>&1 > /dev/null
+    fi
+  done
+}
+
 HELPTEXT="nxos-repository-util : A Simple Tool to manage NXOS repository with Aptly
 
 USAGE :
@@ -110,6 +129,7 @@ OPTIONS :
   create-amd64-mirrors                                              Create the Repository Mirrors 
   update-mirrors [all | (list of space seperated mirrors)]          Update the Created Mirrors
   upload [development | testing] [list of space seperated files]    Upload Files to the repositories
+  push-to-stable                                                    Push Packages from testing to stable
 "
 
 if [ -z `which realpath` ]; then 
@@ -150,6 +170,12 @@ case "$1" in
     else
       upload $@
     fi
+  ;;
+
+  push-to-stable)
+    shift
+
+    pushToStable $@
   ;;
 
   *)
