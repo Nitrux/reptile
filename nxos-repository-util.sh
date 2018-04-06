@@ -105,6 +105,29 @@ pushToStable() {
   done
 }
 
+publishLatest() {
+  DATE=$(echo date+%Y%m%d)
+
+  echo "CREATING SNAPSHOTS"
+
+  echo "    - Creating snapshot bionic-$DATE"
+  aptly snapshot create bionic-$DATE from mirror bionic
+
+  echo "    - Creating snapshot kdeneon-bionic-$DATE"
+  aptly snapshot create kdeneon-bionic-$DATE from mirror kdeneon-bionic
+
+  echo "    - Creating snapshot nxos-stable-$DATE"
+  aptly snapshot create nxos-stable-$DATE from repo stable
+
+  echo
+  echo "MERGING SNAPSHOTS"
+  aptly snapshot merge snapshot-$DATE bionic-$DATE kdeneon-bionic-$DATE nxos-stable-$DATE
+
+  echo
+  echo "PUBLISHING LATEST SNAPSHOT"
+  aptly publish switch nxos stable snapshot-$DATE
+}
+
 HELPTEXT="nxos-repository-util : A Simple Tool to manage NXOS repository with Aptly
 
 USAGE :
@@ -116,6 +139,8 @@ OPTIONS :
   update-mirrors [all | (list of space seperated mirrors)]          Update the Created Mirrors
   upload [development | testing] [list of space seperated files]    Upload Files to the repositories
   push-to-stable                                                    Push Packages from testing to stable
+  publish-latest                                                    Create snapshot, merge and publish
+                                                                    latest packages from mirrors
 "
 
 if [ -z `which realpath` ]; then 
@@ -162,6 +187,12 @@ case "$1" in
     shift
 
     pushToStable $@
+  ;;
+
+  publish-latest)
+    shift
+
+    publishLatest $@
   ;;
 
   *)
