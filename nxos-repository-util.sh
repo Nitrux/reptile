@@ -106,7 +106,7 @@ pushToStable() {
 }
 
 publishLatest() {
-  DATE=$(echo date+%Y%m%d)
+  DATE=$(date +%Y%m%d)
 
   echo "CREATING SNAPSHOTS"
 
