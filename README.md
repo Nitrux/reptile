@@ -1,5 +1,5 @@
 # nxos-repository-util
-A Simple Tool to manage NXOS repository with Aptly
+A Simple Tool to manage Nitrux deb repository with Aptly
 
 <pre>
 nxos-repository-util : A Simple Tool to manage NXOS repository with Aptly
