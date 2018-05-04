@@ -106,7 +106,16 @@ pushToStable() {
 }
 
 publishLatest() {
+  REPO=$1
   DATE=$(date +%Y%m%d)
+
+  if [ -z $REPO ]; then
+    echo "Invalid Number of Arguments"
+    exit 1
+  elif [ $REPO != "testing" -a $REPO != "stable" ]; then
+    echo "Invalid Repository Name"
+    exit 1
+  fi
 
   echo "CREATING SNAPSHOTS"
 
@@ -117,15 +126,15 @@ publishLatest() {
   aptly snapshot create kdeneon-bionic-$DATE from mirror kdeneon-bionic
 
   echo "    - Creating snapshot nxos-stable-$DATE"
-  aptly snapshot create nxos-stable-$DATE from repo stable
+  aptly snapshot create nxos-$REPO-$DATE from repo $REPO
 
   echo
   echo "MERGING SNAPSHOTS"
-  aptly snapshot merge snapshot-$DATE bionic-$DATE kdeneon-bionic-$DATE nxos-stable-$DATE
+  aptly snapshot merge snapshot-$REPO-$DATE bionic-$DATE kdeneon-bionic-$DATE nxos-$REPO-$DATE
 
   echo
   echo "PUBLISHING LATEST SNAPSHOT"
-  aptly publish switch nxos stable snapshot-$DATE
+  aptly publish switch nxos $REPO snapshot-$REPO-$DATE
 }
 
 HELPTEXT="nxos-repository-util : A Simple Tool to manage NXOS repository with Aptly
@@ -139,7 +148,7 @@ OPTIONS :
   update-mirrors [all | (list of space seperated mirrors)]          Update the Created Mirrors
   upload [development | testing] [list of space seperated files]    Upload Files to the repositories
   push-to-stable                                                    Push Packages from testing to stable
-  publish-latest                                                    Create snapshot, merge and publish
+  publish-latest [stable | testing]                                 Create snapshot, merge and publish
                                                                     latest packages from mirrors
 "
 
