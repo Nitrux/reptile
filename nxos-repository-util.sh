@@ -14,7 +14,7 @@ createAmd64Mirrors() {
   echo "  - Adding Key for KDENeon Bionic"
   gpg --no-default-keyring --keyring trustedkeys.gpg --keyserver keys.gnupg.net --recv-keys E6D4736255751E5D 2>&1 | sed -e 's/^/    * /'
   echo "  - Creating AMD64 Mirror for KDENeon Bionic : kdeneon-bionic"
-  aptly mirror create -filter=$NXOS_PACKAGES -filter-with-deps -architectures="amd64" kdeneon-bionic https://archive.neon.kde.org/dev/unstable/ bionic main 2>&1 | sed -e 's/^/    * /'
+  aptly mirror create -filter=$NXOS_PACKAGES -filter-with-deps -architectures="amd64" kdeneon-bionic https://archive.neon.kde.org/dev/stable/ bionic main 2>&1 | sed -e 's/^/    * /'
 }
 
 updateMirrors() {
