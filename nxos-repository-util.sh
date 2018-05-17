@@ -156,8 +156,8 @@ USAGE :
 OPTIONS :
   -h | --help                                                       Print this HELP TEXT
   create-amd64-mirrors                                              Create the Repository Mirrors 
-  update-mirrors [all | (list of space seperated mirrors)]          Update the Created Mirrors
-  upload [development | testing] [list of space seperated files]    Upload Files to the repositories
+  update-mirrors [all | (list of space separated mirrors)]          Update the Created Mirrors
+  upload [development | testing] [list of space separated files]    Upload Files to the repositories
   push-to-stable                                                    Push Packages from testing to stable
   publish-latest [stable | testing]                                 Create snapshot, merge and publish
                                                                     latest packages from mirrors
