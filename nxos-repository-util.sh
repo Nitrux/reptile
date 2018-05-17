@@ -11,6 +11,12 @@ createAmd64Mirrors() {
   aptly mirror create -filter=$NXOS_PACKAGES -filter-with-deps -architectures="amd64" bionic http://archive.ubuntu.com/ubuntu bionic main universe multiverse restricted 2>&1 | sed -e 's/^/    * /'
 
   echo
+  echo "  - Adding Key for Ubuntu Bionic Security"
+  gpg --no-default-keyring --keyring trustedkeys.gpg --keyserver keys.gnupg.net --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32 2>&1 | sed -e 's/^/    * /'
+  echo "  - Creating AMD64 Mirror for Ubuntu Bionic Security: bionic-security"
+  aptly mirror create -filter=$NXOS_PACKAGES -filter-with-deps -architectures="amd64" bionic-security http://archive.ubuntu.com/ubuntu bionic-security main universe multiverse restricted 2>&1 | sed -e 's/^/    * /'
+
+  echo
   echo "  - Adding Key for KDENeon Bionic"
   gpg --no-default-keyring --keyring trustedkeys.gpg --keyserver keys.gnupg.net --recv-keys E6D4736255751E5D 2>&1 | sed -e 's/^/    * /'
   echo "  - Creating AMD64 Mirror for KDENeon Bionic : kdeneon-bionic"
@@ -22,7 +28,7 @@ updateMirrors() {
 
   case "$1" in
     all)
-      TO_BE_UPDATED="bionic kdeneon-bionic"
+      TO_BE_UPDATED="bionic bionic-security kdeneon-bionic"
     ;;
     
     *)
@@ -124,6 +130,9 @@ publishLatest() {
   echo "    - Creating snapshot bionic-$DATE"
   aptly snapshot create bionic-$DATE from mirror bionic
 
+  echo "    - Creating snapshot bionic-security-$DATE"
+  aptly snapshot create bionic-security-$DATE from mirror bionic-security
+
   echo "    - Creating snapshot kdeneon-bionic-$DATE"
   aptly snapshot create kdeneon-bionic-$DATE from mirror kdeneon-bionic
 
@@ -132,7 +141,7 @@ publishLatest() {
 
   echo
   echo "MERGING SNAPSHOTS"
-  aptly snapshot merge snapshot-$REPO-$DATE bionic-$DATE kdeneon-bionic-$DATE nxos-$REPO-$DATE
+  aptly snapshot merge snapshot-$REPO-$DATE bionic-$DATE bionic-security-$DATE kdeneon-bionic-$DATE nxos-$REPO-$DATE
 
   echo
   echo "PUBLISHING LATEST SNAPSHOT"
