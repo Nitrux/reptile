@@ -1,6 +1,6 @@
 #!/bin/sh
 
-NXOS_PACKAGES=$(cat PACKAGES | tr '\n' '|')
+NXOS_PACKAGES=$(paste -s -d '|' PACKAGES)
 
 createAmd64Mirrors() {
 
