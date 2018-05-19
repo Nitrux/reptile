@@ -3,7 +3,7 @@
 # Author  : Bruno Queiros (bqueiros@gmail.com)
 # Date    : 18/05/2018
 # Version : 1.0
-# Notes   : Update repository bionix-security and to clean its logs files 
+# Notes   : Update repository bionix-security and clean cronjob log files 
 # Usage   : Just place me in /etc/cron.daily/
 
 # Update repository and log
