@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# Author  : Bruno Queiros (bqueiros@gmail.com)
+# Date    : 18/05/2018
+# Version : 1.0
+# Notes   : Update repository bionix-security and clean cronjob log files 
+# Usage   : Just place me in /etc/cron.daily/
+
+# Update repository and log
+su -c "/var/lib/aptly/TransferArea/nxos-repository-util/nxos-repository-util.sh update-mirrors bionic-security" aptly &> /var/log/aptly/bionic-security_update.$(date +%F)
+
+# Clean up on aisle 5 
+find /var/log/aptly/bionic-security_update.* -mtime +7 -delete
