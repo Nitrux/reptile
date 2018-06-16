@@ -137,7 +137,7 @@ publishLatest() {
   echo "    - Creating snapshot kdeneon-bionic-$DATE"
   aptly snapshot create kdeneon-bionic-$DATE from mirror kdeneon-bionic
 
-  echo "    - Creating snapshot nxos-stable-$DATE"
+  echo "    - Creating snapshot nxos-$REPO-$DATE"
   aptly snapshot create nxos-$REPO-$DATE from repo $REPO
 
   echo
