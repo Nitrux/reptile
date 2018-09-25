@@ -126,6 +126,25 @@ publishLatest() {
     exit 1
   fi
 
+  echo "DROPING PUBLISHED REPOSITORY $REPO"
+  aptly publish drop nxos testing
+
+  echo
+  echo "DROPING SNAPSHOTS"
+
+  echo "    - Droping Snapshot snapshot-testing-$DATE"
+  aptly snapshot drop snapshot-testing-$DATE
+
+  echo "    - Droping Snapshot bionic-$DATE"
+  aptly snapshot drop bionic-$DATE
+
+  echo "    - Droping Snapshot nxos-testing-$DATE"
+  aptly snapshot drop nxos-testing-$DATE
+
+  echo "    - Droping Snapshot kdeneon-bionic-$DATE"
+  aptly snapshot drop kdeneon-bionic-$DATE
+
+  echo
   echo "CREATING SNAPSHOTS"
 
   echo "    - Creating snapshot bionic-$DATE"
@@ -146,7 +165,8 @@ publishLatest() {
 
   echo
   echo "PUBLISHING LATEST SNAPSHOT"
-  aptly publish switch nxos $REPO snapshot-$REPO-$DATE
+  # aptly publish switch nxos $REPO snapshot-$REPO-$DATE
+  aptly publish -distribution="nxos" -component="main" snapshot snapshot-testing-$DATE /$REPO
 }
 
 HELPTEXT="nxos-repository-util : A Simple Tool to manage NXOS repository with Aptly
