@@ -96,22 +96,24 @@ upload() {
 }
 
 pushToStable() {
-  PACKAGES=$(find ~/.aptly/public/testing/pool/main/ -name *.deb)
-  TODAY=$(date +%s)
-  LIMIT_DAYS=15
+  QUERY=$1
 
-  echo "CHECKING FOR PACKAGES IN testing PUBLISHED >= $LIMIT_DAYS DAYS"
+  if [ -z $QUERY ]; then
+    echo "Invalid Number of Arguments"
+    exit 1
+  else
+    if [ $QUERY = "all" ]; then
+      PACKAGES=$(aptly repo search testing)
 
-  for PACKAGE in $PACKAGES; do
-    PACKAGE_NAME=$(echo $PACKAGE | awk -F/ '{print $NF}' | awk '{print substr($0, 1, length($1)-4)}')
-    PACKAGE_DATE=$(date -r $PACKAGE +%s)
-    DATE_DIFF=$(($TODAY - $PACKAGE_DATE))
-
-    if [ $DATE_DIFF -ge $(($LIMIT_DAYS * 86400)) ]; then
-      echo "    - Moving Package $PACKAGE_NAME to stable"
-      aptly repo move -dry-run testing stable $PACKAGE_NAME 2>&1 > /dev/null
+      for PACKAGE in $PACKAGES; do
+        echo "    - Moving Package $PACKAGE to stable"
+        aptly repo copy testing stable $PACKAGE 2>&1 > /dev/null
+      done
+    else
+      echo "    - Moving Package $QUERY to stable"
+      aptly repo copy testing stable $QUERY 2>&1 > /dev/null
     fi
-  done
+  fi  
 }
 
 publishLatest() {
@@ -127,19 +129,19 @@ publishLatest() {
   fi
 
   echo "DROPING PUBLISHED REPOSITORY $REPO"
-  aptly publish drop nxos testing
+  aptly publish drop nxos $REPO
 
   echo
   echo "DROPING SNAPSHOTS"
 
-  echo "    - Droping Snapshot snapshot-testing-$DATE"
-  aptly snapshot drop snapshot-testing-$DATE
+  echo "    - Droping Snapshot snapshot-$REPO-$DATE"
+  aptly snapshot drop snapshot-$REPO-$DATE
 
   echo "    - Droping Snapshot bionic-$DATE"
   aptly snapshot drop bionic-$DATE
 
-  echo "    - Droping Snapshot nxos-testing-$DATE"
-  aptly snapshot drop nxos-testing-$DATE
+  echo "    - Droping Snapshot nxos-$REPO-$DATE"
+  aptly snapshot drop nxos-$REPO-$DATE
 
   echo "    - Droping Snapshot kdeneon-bionic-$DATE"
   aptly snapshot drop kdeneon-bionic-$DATE
@@ -166,7 +168,7 @@ publishLatest() {
   echo
   echo "PUBLISHING LATEST SNAPSHOT"
   # aptly publish switch nxos $REPO snapshot-$REPO-$DATE
-  aptly publish -distribution="nxos" -component="main" snapshot snapshot-testing-$DATE /$REPO
+  aptly publish -distribution="nxos" -component="main" snapshot snapshot-$REPO-$DATE /$REPO
 }
 
 HELPTEXT="nxos-repository-util : A Simple Tool to manage NXOS repository with Aptly
@@ -179,7 +181,7 @@ OPTIONS :
   create-amd64-mirrors                                              Create the Repository Mirrors 
   update-mirrors [all | (list of space separated mirrors)]          Update the Created Mirrors
   upload [development | testing] [list of space separated files]    Upload Files to the repositories
-  push-to-stable                                                    Push Packages from testing to stable
+  push-to-stable [all | <name>]                                     Push Packages from testing to stable
   publish-latest [stable | testing]                                 Create snapshot, merge and publish
                                                                     latest packages from mirrors
 "
