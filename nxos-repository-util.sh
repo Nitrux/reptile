@@ -81,7 +81,7 @@ upload() {
 
       echo
       echo "PUBLISHING to $REPO"
-      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST $NXOS_SERVER_URL/aptly-api/repos/$REPO/file/$REPO-$APTLY_USERNAME 2>&1 | sed -e 's/^/    - /'
+      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST $NXOS_SERVER_URL/aptly-api/repos/$REPO/file/$REPO-$APTLY_USERNAME?forceReplace=1 2>&1 | sed -e 's/^/    - /'
 
       echo
       echo "UPDATING $REPO"
