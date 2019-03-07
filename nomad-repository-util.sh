@@ -42,14 +42,14 @@ upload() {
       echo "ADDING FILES to $REPO"
       curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST $NXOS_SERVER_URL/aptly-api/repos/$REPO/file/$REPO-$APTLY_USERNAME 2>&1 | sed -e 's/^/    - /'
 
-      echo
-      echo "UPDATING $REPO"
-      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X PUT -H 'Content-Type: application/json' --data '{"local": [{"Component": "main"}]}' $NXOS_SERVER_URL/aptly-api/publish/:$REPO/nxos
+      #echo
+      #echo "UPDATING $REPO"
+      #curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X PUT -H 'Content-Type: application/json' --data '{"local": [{"Component": "main"}]}' $NXOS_SERVER_URL/aptly-api/publish/:$REPO/nxos
 
       echo
       echo "DROPING PUBLISHED REPOSITORY $REPO"
       #aptly publish drop nxos $REPO
-      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X DELETE $NXOS_SERVER_URL/aptly-api/publish/:$REPO/nxos
+      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X DELETE $NXOS_SERVER_URL/aptly-api/publish/$REPO/nxos
 
       echo
       echo "Droping Snapshot snapshot-$REPO-$DATE"
