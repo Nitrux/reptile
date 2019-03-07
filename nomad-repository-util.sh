@@ -46,19 +46,27 @@ upload() {
       echo "UPDATING $REPO"
       curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X PUT -H 'Content-Type: application/json' --data '{"local": [{"Component": "main"}]}' $NXOS_SERVER_URL/aptly-api/publish/:$REPO/nxos
 
+      echo
       echo "DROPING PUBLISHED REPOSITORY $REPO"
-      aptly publish drop nxos $REPO
+      #aptly publish drop nxos $REPO
+      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X DELETE $NXOS_SERVER_URL/aptly-api/publish/:$REPO/nxos
 
-     echo "Droping Snapshot snapshot-$REPO-$DATE"
-     aptly snapshot drop snapshot-$REPO-$DATE
+      echo
+      echo "Droping Snapshot snapshot-$REPO-$DATE"
+      #aptly snapshot drop snapshot-$REPO-$DATE
+      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X DELETE $NXOS_SERVER_URL/aptly-api/snapshots/snapshot-$REPO-$DATE
 
-     echo "Creating snapshot snapshot-$REPO-$DATE"
-     aptly snapshot create snapshot-$REPO-$DATE from repo $REPO
+      echo
+      echo "Creating snapshot snapshot-$REPO-$DATE"
+      #aptly snapshot create snapshot-$REPO-$DATE from repo $REPO
+      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST -H 'Content-Type: application/json' --data '{"Name":"snapshot-$REPO-$DATE"}' $NXOS_SERVER_URL/aptly-api/repos/$REPO/snapshots
 
-     echo "PUBLISHING LATEST SNAPSHOT"
-     aptly publish -distribution="nxos" -component="main" snapshot snapshot-$REPO-$DATE /$REPO
+      echo
+      echo "PUBLISHING LATEST SNAPSHOT"
+      #aptly publish -distribution="nxos" -component="main" snapshot snapshot-$REPO-$DATE /$REPO
+      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X PUT -H 'Content-Type: application/json' --data '{"local": [{"Component": "main"}]}' $NXOS_SERVER_URL/aptly-api/publish/:$REPO/nxos
 
-    ;;
+      ;;
 
     *)
       echo "Invalid Repository"
