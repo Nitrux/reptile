@@ -59,7 +59,7 @@ upload() {
       echo
       echo "Creating snapshot snapshot-$REPO-$DATE"
       #aptly snapshot create snapshot-$REPO-$DATE from repo $REPO
-      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST -H 'Content-Type: application/json' --data '{"Name":"snapshot-$REPO-$DATE"}' $NXOS_SERVER_URL/aptly-api/repos/$REPO/snapshots
+      curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST -H 'Content-Type: application/json' --data '{"Name":"snapshot-'$REPO'-'$DATE'"}' $NXOS_SERVER_URL/aptly-api/repos/$REPO/snapshots
 
       echo
       echo "PUBLISHING LATEST SNAPSHOT"
