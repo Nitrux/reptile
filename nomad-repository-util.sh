@@ -42,10 +42,6 @@ upload() {
       echo "ADDING FILES to $REPO"
       curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST $NXOS_SERVER_URL/aptly-api/repos/$REPO/file/$REPO-$APTLY_USERNAME 2>&1 | sed -e 's/^/    - /'
 
-      #echo
-      #echo "UPDATING $REPO"
-      #curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X PUT -H 'Content-Type: application/json' --data '{"local": [{"Component": "main"}]}' $NXOS_SERVER_URL/aptly-api/publish/:$REPO/nxos
-
       echo
       echo "DROPING PUBLISHED REPOSITORY $REPO"
       #aptly publish drop nxos $REPO
@@ -63,8 +59,6 @@ upload() {
 
       echo
       echo "PUBLISHING LATEST SNAPSHOT"
-      #aptly publish -distribution="nxos" -component="main" snapshot snapshot-$REPO-$DATE /$REPO
-      #curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X PUT -H 'Content-Type: application/json' --data '{"local": [{"Component": "main"}]}' $NXOS_SERVER_URL/aptly-api/publish/:$REPO/nxos
       curl -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST -H 'Content-Type: application/json' --data '{"SourceKind": "snapshot", "Sources": [{"Name": "snapshot-'$REPO'-'$DATE'"}], "Architectures": ["amd64"], "Distribution": "nxos"}' $NXOS_SERVER_URL/aptly-api/publish/:$REPO
 
       ;;
