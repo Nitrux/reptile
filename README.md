@@ -1,4 +1,5 @@
-# Nitrux Repository Utility [![Build Status](https://travis-ci.org/nomad-desktop/nxos-repository-util.svg?branch=master)](https://travis-ci.org/nomad-desktop/nxos-repository-util)
+# Nitrux Repository Utility
+
 A Simple Tool to manage Nitrux deb repository with Aptly
 
 <pre>
