@@ -3,7 +3,7 @@
 NXOS_PACKAGES=$(paste -s -d '|' PACKAGES)
 
 upload() {
-  NXOS_SERVER_URL=http://88.198.66.58/
+  NXOS_SERVER_URL=https://repo.nxos.org/
   REPO=$1
   DATE=$(date +%Y%m%d)
 
