@@ -45,7 +45,7 @@ upload() {
       echo
       echo "DROPING PUBLISHED REPOSITORY $REPO"
       #aptly publish drop nxos $REPO
-      curl -A "mozilla" -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X DELETE $NXOS_SERVER_URL/aptly-api/publish/ubuntu/repos/$REPO/nxos
+      curl -A "mozilla" -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X DELETE $NXOS_SERVER_URL/aptly-api/publish/ubuntu_repos_$REPO/nxos
 
       echo
       echo "Droping Snapshot snapshot-$REPO-$DATE"
@@ -59,7 +59,7 @@ upload() {
 
       echo
       echo "PUBLISHING LATEST SNAPSHOT"
-      curl -A "mozilla" -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST -H 'Content-Type: application/json' --data '{"SourceKind": "snapshot", "Sources": [{"Name": "snapshot-'$REPO'-'$DATE'"}], "Architectures": ["amd64"], "Distribution": "nxos"}' $NXOS_SERVER_URL/aptly-api/publish/:/ubuntu/repos/$REPO
+      curl -A "mozilla" -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST -H 'Content-Type: application/json' --data '{"SourceKind": "snapshot", "Sources": [{"Name": "snapshot-'$REPO'-'$DATE'"}], "Architectures": ["amd64"], "Distribution": "nxos"}' $NXOS_SERVER_URL/aptly-api/publish/ubuntu_repos_$REPO
 
       ;;
 
