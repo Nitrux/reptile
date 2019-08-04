@@ -23,16 +23,16 @@ apt-get install ecm qtbase5-dev build-essential git gcc g++ qtdeclarative5-dev q
 [ ! -d "kirigami" ] && git clone "$KIRIGAMI_SRCS" "kirigami" --depth 1  && [ -d "kirigami" ]
 pushd "./kirigami" && [ ! -d "build" ] && mkdir build
     cd ./build
-    cmake .. -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX"
-    make install -j`nproc`
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+    sudo make install
 popd
 
 
 [ ! -d "mauikit" ] && git clone "$MAUIKIT_SRCS"  --depth 1 && [ -d "mauikit" ]
     pushd ./mauikit && [ ! -d "build" ] && mkdir build
     cd ./build
-    cmake .. -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX"
-    make install -j`nproc`
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+    sudo make install
 popd
 
 
@@ -45,7 +45,7 @@ cmake  -DCMAKE_INSTALL_PREFIX="/usr" -DCMAKE_BUILD_TYPE="$BUILD_TYPE" ..
 DESTDIR=AppDir make install -j`nproc`
 
 # The desktop file entry should set the right file icon name without the file extension
-sed -i "s/Icon=.*/Icon=index/g" AppDir/usr/share/applications/org.kde.index.desktop
+sed -i "s/Icon=.*/Icon=vvave/g" AppDir/usr/share/applications/org.kde.vvave.desktop
 
 
 $LINUXDEPLOY_BIN --appdir=AppDir
