@@ -23,16 +23,16 @@ apt-get install ecm qtbase5-dev build-essential git gcc g++ qtdeclarative5-dev q
 [ ! -d "kirigami" ] && git clone "$KIRIGAMI_SRCS" "kirigami" --depth 1  && [ -d "kirigami" ]
 pushd "./kirigami" && [ ! -d "build" ] && mkdir build
     cd ./build
-    cmake .. -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX"
-    make install -j`nproc`
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+    sudo make install
 popd
 
 
 [ ! -d "mauikit" ] && git clone "$MAUIKIT_SRCS"  --depth 1 && [ -d "mauikit" ]
     pushd ./mauikit && [ ! -d "build" ] && mkdir build
     cd ./build
-    cmake .. -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX"
-    make install -j`nproc`
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+    sudo make install
 popd
 
 
@@ -56,3 +56,4 @@ $LINUXDEPLOY_PLUGIN_QT_BIN --appdir=AppDir
 
 $LINUXDEPLOY_BIN --appdir=AppDir --output appimage
 exit 0
+Collapse
