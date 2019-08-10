@@ -21,20 +21,20 @@ wget -Nc https://github.com/probonopd/linuxdeployqt/releases/download/6/linuxdep
 
 chmod +x linuxdeploy*
 
-sudo apt-get install ecm qtbase5-dev build-essential git gcc g++ qtdeclarative5-dev qml-module-qtquick-controls libqt5svg5-dev qtmultimedia5-dev automake cmake qtquickcontrols2-5-dev libkf5config-dev libkf5service-dev libkf5notifications-dev libkf5kiocore5 libkf5kio-dev qml-module-qtwebengine gettext extra-cmake-modules libkf5wallet-dev qtbase5-private-dev qtwebengine5-dev libkf5wallet-dev qt5-default qt5-default libqt5websockets5-dev libtag1-dev libkf5people-dev libkf5contacts-dev
+apt-get install ecm qtbase5-dev build-essential git gcc g++ qtdeclarative5-dev qml-module-qtquick-controls libqt5svg5-dev qtmultimedia5-dev automake cmake qtquickcontrols2-5-dev libkf5config-dev libkf5service-dev libkf5notifications-dev libkf5kiocore5 libkf5kio-dev qml-module-qtwebengine gettext extra-cmake-modules libkf5wallet-dev qtbase5-private-dev qtwebengine5-dev libkf5wallet-dev qt5-default qt5-default libqt5websockets5-dev libtag1-dev libkf5people-dev libkf5contacts-dev -y
 
 [ ! -d "kirigami" ] && git clone $KIRIGAMI_SRCS && [ -d "kirigami" ] && git pull origin master
 pushd ./kirigami && [ ! -d "build" ] && mkdir build
 cd ./build
 cmake .. -DCMAKE_INSTALL_PREFIX=/usr
-sudo make install
+make install
 
 popd
 [ ! -d "mauikit" ] && git clone $MAUIKIT_SRCS && [ -d "mauikit" ] && git pull origin master
 pushd ./mauikit && [ ! -d "build" ] && mkdir build
 cd ./build
 cmake .. -DCMAKE_INSTALL_PREFIX=/usr
-sudo make install
+make install
 
 popd
 [ ! -d "index-fm" ] && git clone https://invent.kde.org/kde/index-fm && [ -d "index-fm" ] && git pull origin master
