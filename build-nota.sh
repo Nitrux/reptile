@@ -45,7 +45,7 @@ cmake  -DCMAKE_INSTALL_PREFIX="/usr" -DCMAKE_BUILD_TYPE="$BUILD_TYPE" ..
 DESTDIR=AppDir make install -j`nproc`
 
 # The desktop file entry should set the right file icon name without the file extension
-sed -i "s/Icon=.*/Icon=index/g" AppDir/usr/share/applications/org.kde.index.desktop
+sed -i "s/Icon=.*/Icon=nota/g" AppDir/usr/share/applications/org.kde.nota.desktop
 
 
 $LINUXDEPLOY_BIN --appdir=AppDir
