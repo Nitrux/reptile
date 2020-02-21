@@ -58,13 +58,6 @@ curl -A "mozilla" \
 	$_server_url/aptly-api/repos/$_repo/file/upload-tmp
 
 
-# printf "\n\nDropping published repository '$_repo'.\n"
-# curl -A "mozilla" \
-	# -sS -u$APTLY_USERNAME:$APTLY_API_KEY \
-	# -X DELETE \
-	# $_server_url/aptly-api/publish/$_repo/nitrux
-
-
 printf "\n\nUpdating repository.\n"
 curl -A "mozilla" \
 	-sS -u$APTLY_USERNAME:$APTLY_API_KEY \
@@ -72,18 +65,6 @@ curl -A "mozilla" \
 	-H 'Content-Type: application/json' \
 	--data '{ "SourceKind": "local" }' \
 	$_server_url/aptly-api/publish/$_repo
-
-# curl -A "mozilla" \
-	# -sS -u$APTLY_USERNAME:$APTLY_API_KEY \
-	# -X POST \
-	# -H 'Content-Type: application/json' \
-	# --data '{
-		# "SourceKind": "local",
-		# "Sources": [ {"Name": "snapshot-'$_repo'-'$_timestamp'"} ],
-		# "Architectures": ["amd64"],
-		# "Distribution": "nitrux"
-	# }' \
-	# $_server_url/aptly-api/publish/$_repo
 
 
 printf "\n\nPUBLISHED.\n"
