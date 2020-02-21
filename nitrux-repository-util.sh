@@ -55,7 +55,7 @@ printf "\n\nAdding files to repository '$_repo'.\n"
 curl -A "mozilla" \
 	-sS -u$APTLY_USERNAME:$APTLY_API_KEY \
 	-X POST \
-	$_server_url/aptly-api/repos/$_repo/file/$_repo
+	$_server_url/aptly-api/repos/$_repo/file/upload-tmp
 
 
 # printf "\n\nDropping published repository '$_repo'.\n"
