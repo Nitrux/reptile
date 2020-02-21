@@ -33,7 +33,7 @@ for f in "$@"; do
 		exit 1
 	}
 
-	_files="$_files -F file=@$(realpath '$f')"
+	_files="$_files -F file=@$(realpath $f)"
 done
 
 
