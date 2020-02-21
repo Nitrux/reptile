@@ -6,7 +6,8 @@ _timestamp=$(date +%Y%m%d)
 
 
 [ "$APTLY_USERNAME" -a "$APTLY_API_KEY" ] || {
-	echo "Please set APTLY_USERNAME and APTLY_API_KEY before uploading files."
+	echo "Please set 'APTLY_USERNAME' and 'APTLY_API_KEY' before uploading files."
+	echo "Ask the system administrator for them."
 	exit 1
 }
 
@@ -35,33 +36,54 @@ for f in "$@"; do
 	_files="$_files -F file=@$(realpath '$f')"
 done
 
-echo
-echo "Deleting remote updload directory."
-curl -A "mozilla" -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X DELETE $_server_url/aptly-api/files/$_repo-$APTLY_USERNAME
 
-echo
-echo "Uploading files."
-curl -A "mozilla" -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST $_files $_server_url/aptly-api/files/$_repo-$APTLY_USERNAME
+printf "\n\nDeleting remote upload directory.\n"
+curl -A "mozilla" \
+	-sS -u$APTLY_USERNAME:$APTLY_API_KEY \
+	-X DELETE \
+	$_server_url/aptly-api/files/upload-tmp
 
-echo
-echo "Adding files to repository '$_repo'."
-curl -A "mozilla" -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST $_server_url/aptly-api/repos/$_repo/file/$_repo-$APTLY_USERNAME
 
-echo
-echo "Dropping published repository '$_repo'."
-#aptly publish drop nitrux $_repo
-curl -A "mozilla" -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X DELETE $_server_url/aptly-api/publish/$_repo/nitrux
+printf "\n\nUploading files.\n"
+curl -A "mozilla" \
+	-sS -u$APTLY_USERNAME:$APTLY_API_KEY \
+	-X POST $_files \
+	$_server_url/aptly-api/files/upload-tmp
 
-echo
-echo "Droping Snapshot snapshot-$_repo-$_timestamp"
-#aptly snapshot drop snapshot-$_repo-$_timestamp
-curl -A "mozilla" -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X DELETE $_server_url/aptly-api/snapshots/snapshot-$_repo-$_timestamp
 
-echo
-echo "Creating snapshot 'snapshot-$_repo-$_timestamp'."
-#aptly snapshot create snapshot-$_repo-$_timestamp from repo $_repo
-curl -A "mozilla" -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST -H 'Content-Type: application/json' --data '{"Name":"snapshot-'$_repo'-'$_timestamp'"}' $_server_url/aptly-api/repos/$_repo/snapshots
+printf "\n\nAdding files to repository '$_repo'.\n"
+curl -A "mozilla" \
+	-sS -u$APTLY_USERNAME:$APTLY_API_KEY \
+	-X POST \
+	$_server_url/aptly-api/repos/$_repo/file/$_repo
 
-echo
-echo "Publishing..."
-curl -A "mozilla" -sS -u$APTLY_USERNAME:$APTLY_API_KEY -X POST -H 'Content-Type: application/json' --data '{"SourceKind": "snapshot", "Sources": [{"Name": "snapshot-'$_repo'-'$_timestamp'"}], "Architectures": ["amd64"], "Distribution": "nitrux"}' $_server_url/aptly-api/publish/ubuntu_repos_$_repo
+
+# printf "\n\nDropping published repository '$_repo'.\n"
+# curl -A "mozilla" \
+	# -sS -u$APTLY_USERNAME:$APTLY_API_KEY \
+	# -X DELETE \
+	# $_server_url/aptly-api/publish/$_repo/nitrux
+
+
+printf "\n\nUpdating repository.\n"
+curl -A "mozilla" \
+	-sS -u$APTLY_USERNAME:$APTLY_API_KEY \
+	-X PUT \
+	-H 'Content-Type: application/json' \
+	--data '{ "SourceKind": "local" }' \
+	$_server_url/aptly-api/publish/$_repo
+
+# curl -A "mozilla" \
+	# -sS -u$APTLY_USERNAME:$APTLY_API_KEY \
+	# -X POST \
+	# -H 'Content-Type: application/json' \
+	# --data '{
+		# "SourceKind": "local",
+		# "Sources": [ {"Name": "snapshot-'$_repo'-'$_timestamp'"} ],
+		# "Architectures": ["amd64"],
+		# "Distribution": "nitrux"
+	# }' \
+	# $_server_url/aptly-api/publish/$_repo
+
+
+printf "\n\nPUBLISHED.\n"
