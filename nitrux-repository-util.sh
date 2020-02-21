@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 _server_url=https://repo.nxos.org/
 _repo=nitrux
