@@ -64,7 +64,7 @@ curl -A "mozilla" \
 	-X PUT \
 	-H 'Content-Type: application/json' \
 	--data '{ "SourceKind": "local" }' \
-	$_server_url/aptly-api/publish/$_repo
+	$_server_url/aptly-api/publish/$_repo/nitrux
 
 
 printf "\n\nPUBLISHED.\n"
