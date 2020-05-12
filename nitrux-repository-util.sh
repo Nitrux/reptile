@@ -5,7 +5,7 @@ _repo=nitrux
 _timestamp=$(date +%Y%m%d)
 
 
-[ "$APTLY_USERNAME" -a "$APTLY_API_KEY" ] || {
+test "$APTLY_USERNAME" -a "$APTLY_API_KEY" || {
 	echo "Please set 'APTLY_USERNAME' and 'APTLY_API_KEY' before uploading files."
 	echo "Ask the system administrator for them."
 	exit 1
@@ -21,14 +21,8 @@ case "$1" in
 esac
 
 
-[ "$@" ] || {
-	echo "No files provided. Provide at least one."
-	exit 1
-}
-
-
 for f in "$@"; do
-	[ -f "$f" ] || {
+	test -f "$f" || {
 		echo "'$f' is not a file. Aborting."
 		exit 1
 	}
