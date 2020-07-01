@@ -1,64 +1,67 @@
 #! /bin/bash
 
-_server_url=https://repo.nxos.org/
-_repo=nitrux
-_timestamp=$(date +%Y%m%d)
+server_url="https://repo.nxos.org/"
+repo=nitrux
+timestamp=$(date +%Y%m%d)
 
 
-test "$APTLY_USERNAME" -a "$APTLY_API_KEY" || {
-	echo "Please set 'APTLY_USERNAME' and 'APTLY_API_KEY' before uploading files."
-	echo "Ask the system administrator for them."
-	exit 1
-}
+put () { printf "\e[32m%b\e[0m\n" "$@"; }
 
 
 case "$1" in
 	--help|-h)
-		echo "${0##*/}: Upload files to https://repo.nxos.org."
-		echo "Usage: ${0##*/} [-h|--help] <files>"
+		put "${0##*/}: upload packages to https://repo.nxos.org."
+		put "usage: ${0##*/} [-h|--help] <files>"
 		exit
 	;;
 esac
 
 
+test "$APTLY_USERNAME" -a "$APTLY_API_KEY" || {
+	put "please set 'APTLY_USERNAME' and 'APTLY_API_KEY' before uploading files."
+	put "ask luis for them."
+	exit 1
+}
+
+
 for f in "$@"; do
 	test -f "$f" || {
-		echo "'$f' is not a file. Aborting."
+		echo "'$f' is not a file. aborting."
+		echo "usage: ${0##*/} [-h|--help] <files>"
 		exit 1
 	}
-
-	_files="$_files -F file=@$(realpath $f)"
 done
 
 
-printf "\n\nDeleting remote upload directory.\n"
+put "deleting remote upload directory."
 curl -A "mozilla" \
-	-sS -u$APTLY_USERNAME:$APTLY_API_KEY \
+	-sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
 	-X DELETE \
-	$_server_url/aptly-api/files/upload-tmp
+	"$server_url"/aptly-api/files/upload-tmp
 
 
-printf "\n\nUploading files.\n"
+put "uploading files."
+	for f in "$@"; do shift; set -- "$@" -F file="@$f"; done
+	curl -A "mozilla" \
+		-sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
+		-X POST "$@" \
+		"$server_url"/aptly-api/files/upload-tmp
+
+
+put "adding files to '$repo'."
 curl -A "mozilla" \
-	-sS -u$APTLY_USERNAME:$APTLY_API_KEY \
-	-X POST $_files \
-	$_server_url/aptly-api/files/upload-tmp
-
-
-printf "\n\nAdding files to repository '$_repo'.\n"
-curl -A "mozilla" \
-	-sS -u$APTLY_USERNAME:$APTLY_API_KEY \
+	-sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
 	-X POST \
-	$_server_url/aptly-api/repos/$_repo/file/upload-tmp
+	"$server_url"/aptly-api/repos/"$repo"/file/upload-tmp
 
 
-printf "\n\nUpdating repository.\n"
+put "updating repository."
 curl -A "mozilla" \
-	-sS -u$APTLY_USERNAME:$APTLY_API_KEY \
+	-sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
 	-X PUT \
 	-H 'Content-Type: application/json' \
 	--data '{ "SourceKind": "local" }' \
-	$_server_url/aptly-api/publish/$_repo/nitrux
+	"$server_url"/aptly-api/publish/"$repo"/nitrux
 
 
-printf "\n\nPUBLISHED.\n"
+put "done."
