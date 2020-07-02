@@ -1,9 +1,15 @@
-# Nitrux repository util
+# Nitrux repository utility.
 
-A tool to manage our remote repositories with aptly.
+A tool to manage our Debian repositories with aptly.
 
 usage :
-  nxos-repository-util.sh <files>      upload package files to the repo.
+
+```
+  wget -qO - \
+  	https://raw.githubusercontent.com/Nitrux/nitrux-repository-util/master/upload-pkgs \
+  	| sh -s <files>
+
+```
 
 # Issues
 If you find problems with the contents of this repository please create an issue.
