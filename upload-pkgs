@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 
 server_url="https://repo.nxos.org/"
 repo=nitrux
@@ -19,7 +19,7 @@ esac
 
 test "$APTLY_USERNAME" -a "$APTLY_API_KEY" || {
 	put "please set 'APTLY_USERNAME' and 'APTLY_API_KEY' before uploading files."
-	put "ask luis for them."
+	put "ask luis for them. ;)"
 	exit 1
 }
 
@@ -34,6 +34,7 @@ done
 
 
 put "deleting remote upload directory."
+
 curl -A "mozilla" \
 	-sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
 	-X DELETE \
@@ -41,14 +42,21 @@ curl -A "mozilla" \
 
 
 put "uploading files."
-	for f in "$@"; do shift; set -- "$@" -F file="@$f"; done
-	curl -A "mozilla" \
-		-sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
-		-X POST "$@" \
-		"$server_url"/aptly-api/files/upload-tmp
+
+#	the loop below prepends '-F file=' to each file passed.
+#	e.g.:
+#	'a.deb b.deb c.deb' gets converted to: '-F file=a.deb -F file=b.deb -F file=c.deb'.
+
+for f in "$@"; do shift; set -- "$@" -F file="@$f"; done
+
+curl -A "mozilla" \
+	-sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
+	-X POST "$@" \
+	"$server_url"/aptly-api/files/upload-tmp
 
 
 put "adding files to '$repo'."
+
 curl -A "mozilla" \
 	-sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
 	-X POST \
@@ -56,6 +64,7 @@ curl -A "mozilla" \
 
 
 put "updating repository."
+
 curl -A "mozilla" \
 	-sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
 	-X PUT \
