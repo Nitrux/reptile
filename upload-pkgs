@@ -2,7 +2,7 @@
 
 
 server_url="https://repo.nxos.org/"
-repo=nitrux
+repo=arm64
 
 
 test "$APTLY_USERNAME" -a "$APTLY_API_KEY" || {
