@@ -25,7 +25,7 @@ echo "deleting remote upload directory."
 curl -A "mozilla" \
     -X DELETE \
     -sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
-    "$server_url"/aptly-api/files/upload-tmp
+    "$server_url/aptly-api/files/upload-tmp"
 
 
 for f; do set -- "$@" -F file="@$f"; shift; done
@@ -34,14 +34,14 @@ echo "uploading files."
 curl -A "mozilla" \
     -X POST "$@" \
     -sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
-    "$server_url"/aptly-api/files/upload-tmp
+    "$server_url/aptly-api/files/upload-tmp"
 
 
 echo "adding files to $repo."
 curl -A "mozilla" \
     -X POST \
     -sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
-    "$server_url"/aptly-api/repos/"$repo"/file/upload-tmp
+    "$server_url/aptly-api/repos/$repo/file/upload-tmp"
 
 
 echo "updating repository."
@@ -50,7 +50,7 @@ curl -A "mozilla" \
     -sS -u"$APTLY_USERNAME:$APTLY_API_KEY" \
     -H 'Content-Type: application/json' \
     --data '{ "SourceKind": "local" }' \
-    "$server_url"/aptly-api/publish/"$repo"/nitrux
+    "$server_url/aptly-api/publish/$repo/$repo"
 
 
 echo "done."
