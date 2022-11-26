@@ -1,0 +1,68 @@
+#! /bin/sh
+
+
+# This file must be available on $PATH on the server.
+# Packages are uploaded to a temporary directory through ssh.
+# All queries are performed through ssh.
+
+
+# Update the index.
+reindex () {
+    cd "$BASE_DIR/$1"
+    dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
+}
+
+mkr () {
+    mkdir -p "$BASE_DIR/$1"
+}
+
+rmr () {
+    rm -rf "$BASE_DIR/$1"
+}
+
+add () {
+    cp "$1" "$BASE_DIR/$2"
+    echo ${1%%_*}*
+    reindex "$2"
+}
+
+rmp () {
+    rm "$BASE_DIR/$1/$2"
+    reindex "$1"
+}
+
+mvp () {
+    mv "$BASE_DIR/$2/$1" "$BASE_DIR/$3"
+    reindex "$from"
+    reindex "$to"
+}
+
+lsp () {
+    dpkg --contents "$BASE_DIR/$1/$2"
+}
+
+lsr () {
+    cd "$BASE_DIR"
+
+    case $# in
+        ( 0 )   printf '%s\n' *;;
+        ( 1 )   printf '%s\n' "$1"/*;;
+        ( 2 )   printf '%s\n' "$1/$2";;
+    esac
+
+    for repo in *; do
+        find "$repo/" -name "$hint" \
+            | sed "s:.*/:$repo :"
+    done
+}
+
+case "$1" in
+    mkr | rmr | add | rmp | mvp | lsp | lsr )
+        BASE_DIR="${BASE_DIR:-/var/reptile}"
+        mkdir -p "$BASE_DIR"
+        "${@}";;
+
+    * )
+        echo "Bad command. For help, use: boa help"
+        exit 1;;
+esac

@@ -1,0 +1,45 @@
+#! /bin/sh
+
+
+# To create a new repository:
+#
+#   ssh srv reptile mkrepo stable
+#   ssh srv reptile mkrepo testing
+#
+#   echo "deb [trusted=yes] https://repo.nxos.org stable" >> /etc/apt/sources.list
+#   echo "deb [trusted=yes] https://repo.nxos.org testing" >> /etc/apt/sources.list
+#
+
+
+add () {
+    scp "$1" "$remote:/tmp/"
+    ssh "$remote" reptile add "/tmp/$1" "$2"
+    ssh "$remote" rm "/tmp/$1"
+}
+
+
+case "$remote" in
+    mkr | rmr | rmp | mvp | lsp | lsr )
+        ssh "$remote" reptile "${@}";;
+
+    add )
+        "$@";;
+
+    * )
+        echo "Usage: boa <remote> <command> [args]"
+        echo ""
+        echo "command is any of:"
+        echo ""
+        echo "  mkr <repo/branch>                 Create a new repository. Branches are just subdirectories."
+        echo "  rmr <repo[/branch]>               Remove repository or branch. If branch is ommited, removes whole repo."
+        echo "  add <pkg> <repo>                  Add a package to a repository."
+        echo "  rmp <repo> <pkg>                  Remove a package from a repository."
+        echo "  mvp <pkg> <from-repo> <to-repo>   Move a package from a repository to another."
+        echo "  lsp <repo> <pkg>                  List contents of a package in a repository."
+        echo ""
+        echo "  lsr [repo [query]]                List packages in a repository. If no arguments are provided, all"
+        echo "                                    repositories will be listed. If a repository is provided, that"
+        echo "                                    repository's content will be listed. If both a repository and a"
+        echo "                                    query are provided, then only packages matching the query will"
+        echo "                                    be listed.";;
+esac
