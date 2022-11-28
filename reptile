@@ -1,68 +1,28 @@
-#! /bin/sh
+#! /bin/sh -x
 
 
-# This file must be available on $PATH on the server.
-# Packages are uploaded to a temporary directory through ssh.
-# All queries are performed through ssh.
+index () { for repo; do dpkg-scanpackages "$repo" | gzip -9c > "$repo/Packages.gz"; done; }
+
+echo "$*" | grep -F '../' \
+    && echo 'Relative file names are not allowed. Aborting.' \
+    && exit 1
+
+mkdir -p /var/reptile
+cd /var/reptile
 
 
-# Update the index.
-reindex () {
-    cd "$BASE_DIR/$1"
-    dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
-}
+x="$1"; shift
+case "$x" in
+    cp ) rm -f "$2/`basename "${1%%_*}"`"* && cp "$1" "$2" && index "$2";;
 
-mkr () {
-    mkdir -p "$BASE_DIR/$1"
-}
+    mk ) mkdir -p "$1";;
 
-rmr () {
-    rm -rf "$BASE_DIR/$1"
-}
+    mv ) [ $# = 3 ] && mv "$1" "$2"
+         [ $# = 4 ] && mv "$2/$1" "$3" && index "$2" "$3";;
 
-add () {
-    cp "$1" "$BASE_DIR/$2"
-    echo ${1%%_*}*
-    reindex "$2"
-}
+    rm ) [ $# = 2 ] && rm -rf "$1"
+         [ $# = 2 ] && rm -f "$1/$2" && index "$1";;
 
-rmp () {
-    rm "$BASE_DIR/$1/$2"
-    reindex "$1"
-}
-
-mvp () {
-    mv "$BASE_DIR/$2/$1" "$BASE_DIR/$3"
-    reindex "$from"
-    reindex "$to"
-}
-
-lsp () {
-    dpkg --contents "$BASE_DIR/$1/$2"
-}
-
-lsr () {
-    cd "$BASE_DIR"
-
-    case $# in
-        ( 0 )   printf '%s\n' *;;
-        ( 1 )   printf '%s\n' "$1"/*;;
-        ( 2 )   printf '%s\n' "$1/$2";;
-    esac
-
-    for repo in *; do
-        find "$repo/" -name "$hint" \
-            | sed "s:.*/:$repo :"
-    done
-}
-
-case "$1" in
-    mkr | rmr | add | rmp | mvp | lsp | lsr )
-        BASE_DIR="${BASE_DIR:-/var/reptile}"
-        mkdir -p "$BASE_DIR"
-        "${@}";;
-
-    * )
-        echo "Bad command. For help, use: boa help"
-        exit 1;;
-esac
+    ls ) [ $# = 0 ] && ls -1
+         [ $# = 1 ] && ls -1 "$1"
+         [ $# = 2 ] && dpkg --contents "$1/$2";; esac

@@ -1,45 +1,30 @@
 #! /bin/sh
 
 
-# To create a new repository:
-#
-#   ssh srv reptile mkrepo stable
-#   ssh srv reptile mkrepo testing
-#
-#   echo "deb [trusted=yes] https://repo.nxos.org stable" >> /etc/apt/sources.list
-#   echo "deb [trusted=yes] https://repo.nxos.org testing" >> /etc/apt/sources.list
-#
+# echo "deb [trusted=yes] https://repo.nxos.org stable" >> /etc/apt/sources.list
 
-
-add () {
+cp () {
     scp "$1" "$remote:/tmp/"
-    ssh "$remote" reptile add "/tmp/$1" "$2"
-    ssh "$remote" rm "/tmp/$1"
+    ssh "$remote" reptile cp "/tmp/${1##*/}" "$2"
+    ssh "$remote" rm "/tmp/${1##*/}"
 }
 
+[ $# -gt 0 ] && remote="$1" && shift
 
-case "$remote" in
-    mkr | rmr | rmp | mvp | lsp | lsr )
-        ssh "$remote" reptile "${@}";;
-
-    add )
-        "$@";;
+case "$1" in
+    cp ) "$@";;
+    mk | mv | rm | ls ) ssh "$remote" reptile "$@";;
 
     * )
-        echo "Usage: boa <remote> <command> [args]"
+        echo "Usage: boa <remote> <command [args]>"
         echo ""
         echo "command is any of:"
         echo ""
-        echo "  mkr <repo/branch>                 Create a new repository. Branches are just subdirectories."
-        echo "  rmr <repo[/branch]>               Remove repository or branch. If branch is ommited, removes whole repo."
-        echo "  add <pkg> <repo>                  Add a package to a repository."
-        echo "  rmp <repo> <pkg>                  Remove a package from a repository."
-        echo "  mvp <pkg> <from-repo> <to-repo>   Move a package from a repository to another."
-        echo "  lsp <repo> <pkg>                  List contents of a package in a repository."
-        echo ""
-        echo "  lsr [repo [query]]                List packages in a repository. If no arguments are provided, all"
-        echo "                                    repositories will be listed. If a repository is provided, that"
-        echo "                                    repository's content will be listed. If both a repository and a"
-        echo "                                    query are provided, then only packages matching the query will"
-        echo "                                    be listed.";;
+        echo "  mk <repo>             Create a new repository."
+        echo "  cp <pkg> <repo>       Add a package to a repository."
+        echo "  rm <repo> [pkg]       Remove a repository or package that belongs to a repository."
+        echo "  mv <pkg> <from> <to>  Move a package from a repository to another."
+        echo "  mv <old> <new>        Rename a repository."
+        echo "  ls [repo] [pkg]       List the contents of a repository or a package. If no"
+        echo "                        arguments are provided, list all repositories.";;
 esac
