@@ -1,4 +1,4 @@
-#! /bin/sh -x
+#! /bin/sh
 
 
 index () { for repo; do dpkg-scanpackages "$repo" | gzip -9c > "$repo/Packages.gz"; done; }
