@@ -38,7 +38,17 @@ command is any of:
   mv <old> <new>         Rename a repository.
   ls [repo] [pkg]        List the contents of a repository or a package. If no
                          arguments are provided, list all repositories.
- ```
+```
+
+Now, you can serve your repository like this:
+
+```
+root@my-server # busybox httpd -vp 8000 -h /var/reptile
+```
+
+The path `/var/reptile` is where all your repositories reside. If you'd like
+to change that location, modify the script `reptile` (it's small, it won't hurt,
+trust me).
 
 # Issues
 If you find problems with the contents of this repository please create an issue.
