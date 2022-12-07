@@ -1,4 +1,4 @@
-# Nitrux repository utility.
+# Reptile 🦕.
 
 > The easiest, no-nonsense, nonfancy tool to manage Debian repositories.
 
