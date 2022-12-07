@@ -1,13 +1,21 @@
 #! /bin/sh
 
 
+# boa mk stable
 # echo "deb [trusted=yes] https://repo.nxos.org stable" >> /etc/apt/sources.list
 
 cp () {
-    scp "$1" "$remote:/tmp/"
-    ssh "$remote" reptile cp "/tmp/${1##*/}" "$2"
-    ssh "$remote" rm "/tmp/${1##*/}"
+    r="$1"; shift
+
+    tmp=`ssh "$remote" mktemp -d`
+    scp "$@" "$remote:$tmp" || return $?
+
+    for p in "$@"; do set -- "$@" "$tmp/${p##*/}"; shift; done
+
+    ssh "$remote" reptile cp "$r" "$@"
+    ssh "$remote" rm -rf "$tmp"
 }
+
 
 [ $# -gt 0 ] && remote="$1" && shift
 
@@ -20,9 +28,9 @@ case "$1" in
         echo ""
         echo "command is any of:"
         echo ""
-        echo "  mk <repo>             Create a new repository."
-        echo "  cp <pkg> <repo>       Add a package to a repository."
-        echo "  rm <repo> [pkg]       Remove a repository or package that belongs to a repository."
+        echo "  mk <repos>            Create new repositories."
+        echo "  cp <repo> <pkgs>      Add packages to a repository."
+        echo "  rm <repo> [pkgs]      Remove a repository or package that belongs to a repository."
         echo "  mv <pkg> <from> <to>  Move a package from a repository to another."
         echo "  mv <old> <new>        Rename a repository."
         echo "  ls [repo] [pkg]       List the contents of a repository or a package. If no"
