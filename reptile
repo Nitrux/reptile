@@ -23,14 +23,14 @@ case "$x" in
     cp ) r="$1"; shift
          for p; do rm -f "$r/`basename ${p%%_*}`"*; done
          cp "$@" "$r"
-         index "$2";;
+         index "$r";;
 
     rm ) case $# in
          ( 0 ) ;;
          ( 1 ) rm -rf "$1";;
          ( * ) r="$1"; shift
                for p; do rm -f "$r/$p"; done
-               index "$1";; esac;;
+               index "$r";; esac;;
 
     ls ) case $# in
          ( 0 ) ls -1;;
