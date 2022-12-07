@@ -53,4 +53,4 @@ trust me).
 # Issues
 If you find problems with the contents of this repository please create an issue.
 
-©2018 Nitrux Latinoamericana S.C.
+©2022 Nitrux Latinoamericana S.C.
